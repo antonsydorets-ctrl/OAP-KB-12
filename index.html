@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="uk">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Дошка оголошень групи</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./app.js" defer></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <h1>Дошка оголошень групи</h1>
+        <p id="sessionText">Вхід не виконано</p>
+      </div>
+      <button id="logoutButton" type="button" class="ghost">Вийти</button>
+    </header>
+
+    <main class="layout">
+      <section class="panel auth-panel">
+        <h2>Вхід</h2>
+        <form id="loginForm" autocomplete="off">
+          <label>
+            Email
+            <input id="emailInput" type="email" placeholder="email користувача" required autocomplete="username" />
+          </label>
+          <label>
+            Пароль
+            <input id="passwordInput" type="password" placeholder="пароль" required minlength="6" autocomplete="current-password" />
+          </label>
+          <button type="submit">Увійти</button>
+        </form>
+      </section>
+
+      <section class="panel form-panel">
+        <h2 id="formTitle">Нове оголошення</h2>
+        <form id="postForm">
+          <input id="postIdInput" type="hidden" />
+          <label>
+            Заголовок
+            <input id="titleInput" type="text" required minlength="3" maxlength="120" />
+          </label>
+          <label>
+            Категорія
+            <select id="categoryInput" required>
+              <option value="">Оберіть категорію</option>
+              <option value="news">Новини</option>
+              <option value="study">Навчання</option>
+              <option value="event">Подія</option>
+              <option value="question">Питання</option>
+            </select>
+          </label>
+          <label>
+            Текст
+            <textarea id="bodyInput" rows="7" required minlength="5" maxlength="4000"></textarea>
+          </label>
+          <div class="actions">
+            <button type="submit">Зберегти</button>
+            <button id="cancelEditButton" type="button" class="ghost">Скасувати</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="panel list-panel">
+        <div class="toolbar">
+          <label>
+            Пошук
+            <input id="searchInput" type="search" placeholder="Назва або текст" />
+          </label>
+          <label>
+            Категорія
+            <select id="filterCategoryInput">
+              <option value="">Усі</option>
+              <option value="news">Новини</option>
+              <option value="study">Навчання</option>
+              <option value="event">Подія</option>
+              <option value="question">Питання</option>
+            </select>
+          </label>
+          <label>
+            Сортування
+            <select id="sortInput">
+              <option value="createdAt:desc">Нові спочатку</option>
+              <option value="createdAt:asc">Старі спочатку</option>
+              <option value="title:asc">Назва А-Я</option>
+              <option value="category:asc">Категорія</option>
+            </select>
+          </label>
+        </div>
+        <p id="message" class="message"></p>
+        <table>
+          <thead>
+            <tr>
+              <th>Назва</th>
+              <th>Категорія</th>
+              <th>Автор</th>
+              <th>Дата</th>
+              <th>Коментарі</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="postsBody"></tbody>
+        </table>
+      </section>
+
+      <section class="panel analytics-panel">
+        <h2>Аналітика</h2>
+        <div id="analyticsList" class="analytics"></div>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,63 @@
+@base = http://localhost:3000/api/v1
+@annaEmail = anna@group.local
+@bohdanEmail = bohdan@group.local
+@password = User123!
+
+### login Anna
+# @name annaLogin
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{annaEmail}}",
+  "password": "{{password}}"
+}
+
+### login Bohdan
+# @name bohdanLogin
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "{{bohdanEmail}}",
+  "password": "{{password}}"
+}
+
+### SQLi: payload is treated as text because backend uses parameterized queries
+GET {{base}}/posts?search=' OR 1=1 --&sortBy=createdAt&order=desc
+Authorization: Bearer {{annaLogin.response.body.data.token}}
+
+### XSS: stored value is accepted as text, frontend renders it through textContent
+# @name xssPost
+POST {{base}}/posts
+Content-Type: application/json
+Authorization: Bearer {{annaLogin.response.body.data.token}}
+
+{
+  "title": "XSS перевірка",
+  "category": "news",
+  "body": "<img src=x onerror=alert('xss')><script>alert('xss')</script>"
+}
+
+### IDOR: Bohdan cannot read Anna's post
+GET {{base}}/posts/{{xssPost.response.body.data.id}}
+Authorization: Bearer {{bohdanLogin.response.body.data.token}}
+
+### IDOR: Anna can read her own post
+GET {{base}}/posts/{{xssPost.response.body.data.id}}
+Authorization: Bearer {{annaLogin.response.body.data.token}}
+
+### IDOR: Bohdan cannot update Anna's post
+PUT {{base}}/posts/{{xssPost.response.body.data.id}}
+Content-Type: application/json
+Authorization: Bearer {{bohdanLogin.response.body.data.token}}
+
+{
+  "title": "Чужа зміна",
+  "category": "question",
+  "body": "Це має повернути 403."
+}
+
+### Headers and clean error shape
+GET http://localhost:3000/unknown-route
+Origin: http://localhost:5500
